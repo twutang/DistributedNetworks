@@ -51,7 +51,7 @@ public class UDPClient {
 		try {
 			sendSoc = new DatagramSocket(); //initalise private member
 		} catch (SocketException e) {
-			System.out.println("Error creating socket for sending data.");
+			e.printStackTrace();
 		}
 	}
 
@@ -64,8 +64,8 @@ public class UDPClient {
 
 				send(message.toString(), serverAddr, recvPort);
 
-			} catch (IOException e) {
-				System.out.println("Error transmitting messages from client.");
+			} catch (Exception e) {
+				e.printStackTrace();
 				System.exit(-1);
 			}
 		}
@@ -88,7 +88,7 @@ public class UDPClient {
 		try {
 			sendSoc.send(pkt);
 		} catch (IOException e) {
-			System.out.println("Error transmitting packet over Network.");
+			e.printStackTrace();
 			System.exit(-1);
 		}
 	}

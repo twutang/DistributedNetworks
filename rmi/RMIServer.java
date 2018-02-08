@@ -9,6 +9,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
+import java.rmi.RMISecurityManager;
+
 
 import common.*;
 
@@ -35,9 +37,10 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
+		int count = 0;
+		String declare = "Lost packet numbers: ";
+
 		if (msg.messageNum + 1 == totalMessages) {
-			String declare = "Lost packet numbers: ";
-			int count = 0;
 			for (int i = 0; i < totalMessages; i++) {
 				if (receivedMessages[i] != 1) {
 					count++;
@@ -47,7 +50,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		}
 			// Edge case handling
 		if (count == 0) {
-		s = s + "None";
+		String s = s + "None";
 		}
 
 		System.out.println("Total messages sent: " + totalMessages);
@@ -64,12 +67,12 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		// TO-DO: Instantiate the server class
 		try {
 		// TO-DO: Initialise Security Manager
-		if (System.setSecurityManager() == null;) {
+		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new RMISecurityManager());
 		}
 			rmis = new RMIServer();
 		} catch(RemoteException e) {
-			//print except
+			e.printStackTrace();
 		}
 
 		// TO-DO: Bind to RMI registry
@@ -91,7 +94,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		// expects different things from the URL field.
 		reg.rebind ("RMIServer", server);
 		} catch (RemoteException e) {
-		//e.printStackTrace;
+			e.printStackTrace();
 		}
 	}
 }

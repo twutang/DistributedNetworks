@@ -41,15 +41,13 @@ public class UDPServer {
 					// processing message
 					String pmessage = new String(pac.getData(), pac.getOffset(), pac.getLength());
 					processMessage(pmessage);
-				} catch (InterruptedIOException e) {
-					System.out.println("Socket Timeout occured.");
+				} catch (Exception e) {
+					e.printStackTrace();
 					System.exit(-1);
 				}
 			}
-		} catch(SocketException e) {
-			System.out.println("Socket exception: ")
-		} catch(IOException e){
-			System.out.println("")
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -60,11 +58,9 @@ public class UDPServer {
 		// TO-DO: Use the data to construct a new MessageInfo object
 
 		try {
-			message = new MessageInfo(data.trim);
-		} catch (ClassNotFoundException e) {
-			System.out.println("Error: Could not find class match for transmitted message.");
-		} catch (IOException e) {
-			System.out.println("Error: IO exception creating ObjectInputStream.");
+			message = new MessageInfo(data.trim());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
@@ -81,6 +77,8 @@ public class UDPServer {
 
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
+		int count = 0;
+		String declare = "Lost packet numbers: ";
 
 		if (message.messageNum + 1 == message.totalMessages) {
 			System.out.println("Total messages: " + message.totalMessages);
@@ -123,8 +121,8 @@ public class UDPServer {
 
 		try {
 			UDPServer.run();
-		} catch (SocketTimeoutException e) {
-			System.out.println("Socket Timeout");
+		} catch (Exception e) {
+			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
