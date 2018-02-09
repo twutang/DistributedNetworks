@@ -67,7 +67,8 @@ public class UDPServer {
 
 		if (receivedMessages == null) {
 			totalMessages = 0;
-			receivedMessages = new int[0];
+
+			receivedMessages = new int[message.totalMessages];
 		}
 
 		// TO-DO: Log receipt of the message
@@ -77,15 +78,9 @@ public class UDPServer {
 
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
-		int count = 0;
-		String declare = "Lost packet numbers: ";
-
-		if (message.messageNum + 1 == message.totalMessages) {
-			System.out.println("Total messages: " + message.totalMessages);
-			System.out.println("Messages processed successfully: " + (message.totalMessages - count));
-			System.out.println(declare);
+		if (totalMessages == message.totalMessages) {
+			printResult();
 		}
-
 	}
 
 
@@ -125,5 +120,25 @@ public class UDPServer {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+	}
+
+	public void printResult() {
+		if(receivedMessages == null || totalMessages <= 0) {
+		System.out.println("No messages detected.");
+			return;
+		}
+
+		String missingMessages = "";
+		for(int i = 0; i <receivedMessages.length; i++) {
+			if(receivedMessages[i] == 0) {
+			missingMessages += i + ", ";
+			}
+		}
+
+		System.out.println("Number of messages received: " + totalMessages);
+		System.out.println("Lost Messages: " + missingMessages);
+		//reset
+		receivedMessages = null;
+		totalMessages = -1;
 	}
 }

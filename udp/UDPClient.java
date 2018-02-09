@@ -61,12 +61,9 @@ public class UDPClient {
 		for(int i = 0; i < countTo; i++) {
 			try {
 				MessageInfo message = new MessageInfo(countTo,i);
-
 				send(message.toString(), serverAddr, recvPort);
-
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.exit(-1);
 			}
 		}
 
@@ -85,11 +82,11 @@ public class UDPClient {
 
 		// TO-DO: build the datagram packet and send it to the server
 		pkt = new DatagramPacket(pktData, payloadSize, destAddr, destPort);
+		
 		try {
 			sendSoc.send(pkt);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.exit(-1);
 		}
 	}
 }
