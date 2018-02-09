@@ -38,9 +38,11 @@ public class UDPServer {
 				try {
 					recvSoc.setSoTimeout(30*1000);
 					recvSoc.receive(pac);
+					
 					// processing message
 					String pmessage = new String(pac.getData(), pac.getOffset(), pac.getLength());
 					processMessage(pmessage);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.exit(-1);
