@@ -19,7 +19,28 @@ public class UDPServer {
 	private int[] receivedMessages;
 	private boolean close;
 
-	private void run() {
+	public static void main(String args[]) {
+		int	recvPort;
+
+		// Get the parameters from command line
+		if (args.length < 1) {
+			System.err.println("No arguments present: recv port required");
+			System.exit(-1);
+		}
+		recvPort = Integer.parseInt(args[0]);
+
+		// TO-DO: Construct Server object and start it by calling run().
+		UDPServer UDPServer = new UDPServer(recvPort);
+
+		try {
+			UDPServer.run();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+	private void run()  {
 		int				pacSize;
 		byte[]			pacData;
 		DatagramPacket 	pac;
@@ -38,11 +59,11 @@ public class UDPServer {
 				try {
 					recvSoc.setSoTimeout(30*1000);
 					recvSoc.receive(pac);
-					
+
 					// processing message
 					String pmessage = new String(pac.getData(), pac.getOffset(), pac.getLength());
 					processMessage(pmessage);
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.exit(-1);
@@ -85,7 +106,6 @@ public class UDPServer {
 		}
 	}
 
-
 	public UDPServer(int rp) {
 		// TO-DO: Initialise UDP socket for receiving data
 		try {
@@ -103,44 +123,22 @@ public class UDPServer {
 		System.out.println("UDPServer initialised");
 	}
 
-	public static void main(String args[]) {
-		int	recvPort;
-
-		// Get the parameters from command line
-		if (args.length < 1) {
-			System.err.println("No arguments present: recv port required");
-			System.exit(-1);
-		}
-		recvPort = Integer.parseInt(args[0]);
-
-		// TO-DO: Construct Server object and start it by calling run().
-		UDPServer UDPServer = new UDPServer(recvPort);
-
-		try {
-			UDPServer.run();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
 
 	public void printResult() {
-		if(receivedMessages == null || totalMessages <= 0) {
-		System.out.println("No messages detected.");
-			return;
-		}
 
+		int count = 0;
 		String missingMessages = "";
 		for(int i = 0; i <receivedMessages.length; i++) {
 			if(receivedMessages[i] == 0) {
 			missingMessages += i + ", ";
+			count++;
 			}
 		}
 
 		System.out.println("Number of messages received: " + totalMessages);
-		System.out.println("Lost Messages: " + missingMessages);
-		//reset
-		receivedMessages = null;
-		totalMessages = -1;
+		System.out.println("Number of messages lost: " + count);
+		System.out.println("Lost messages positions: " + missingMessages);
+
+		System.exit(0);
 	}
 }

@@ -42,8 +42,8 @@ public class UDPClient {
 		UDPClient UDPclient = new UDPClient();
 
 		UDPclient.testLoop(serverAddr, recvPort, countTo);
-		System.out.println("Sending messages");
 
+		return;
 	}
 
 	public UDPClient() {
@@ -52,6 +52,8 @@ public class UDPClient {
 			sendSoc = new DatagramSocket();
 		} catch (SocketException e) {
 			e.printStackTrace(); // Expected exception could be inability to create diagramsocket
+		} catch (Exception e) {
+			e.printStackTrace(); // General catch
 		}
 	}
 
@@ -80,8 +82,10 @@ public class UDPClient {
 		
 		try {
 			sendSoc.send(pkt);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace(); //Expecting IO Exception if message fails to send
+		} catch (Exception e) {
+			e.printStackTrace(); // General catch
 		}
 	}
 }

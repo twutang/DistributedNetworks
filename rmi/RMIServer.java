@@ -3,14 +3,15 @@
  */
 package rmi;
 
-import java.net.MalformedURLException;
+import java.net.MalformedURLException; // not used - compiler indicated it is never thrown during binding
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.rmi.registry.Registry;
-
+import java.rmi.RMISecurityManager;
+import java.rmi.NotBoundException;
 
 import common.*;
 
@@ -18,6 +19,29 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 	private int totalMessages = -1;
 	private int[] receivedMessages;
+
+	public static void main(String[] args) {
+
+		RMIServer rmis = null;
+
+		try {
+		// TO-DO: Initialise Security Manager
+		if (System.getSecurityManager() == null) {
+			System.setSecurityManager(new RMISecurityManager());
+		}
+		// TO-DO: Instantiate the server class
+			rmis = new RMIServer();
+		} catch(RemoteException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// TO-DO: Bind to RMI registry
+		rebindServer("localhost", rmis); //catches located in called function
+	}
 
 	public RMIServer() throws RemoteException {
 	}
@@ -42,27 +66,6 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		}
 	}
 
-
-	public static void main(String[] args) {
-
-		RMIServer rmis = null;
-
-		// TO-DO: Instantiate the server class
-		try {
-		// TO-DO: Initialise Security Manager
-		if (System.getSecurityManager() == null) {
-			System.setSecurityManager(new SecurityManager());
-		}
-			rmis = new RMIServer();
-		} catch(RemoteException e) {
-			e.printStackTrace();
-		}
-
-		// TO-DO: Bind to RMI registry
-		rebindServer("localhost", rmis);
-
-	}
-
 	protected static void rebindServer(String serverURL, RMIServer server) {
 		Registry reg;
 		// TO-DO:
@@ -76,28 +79,29 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		// Note - Registry.rebind (as returned by createRegistry / getRegistry) does something similar but
 		// expects different things from the URL field.
 		reg.rebind ("RMIServer", server);
+
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			e.printStackTrace(); // Checking for remote exception
+		} catch (Exception e) {
+			e.printStackTrace(); // General catch
 		}
 	}
 
 	public void printResult() {
-		if(receivedMessages == null || totalMessages <= 0) {
-			System.out.println("No messages detected.");
-			return;
-		}
 
+		int count = 0;
 		String missingMessages = "";
 		for(int i = 0; i <receivedMessages.length; i++) {
 			if(receivedMessages[i] == 0) {
 				missingMessages += i + ", ";
+				count++;
 			}
 		}
 
-		System.out.println("Number of messages received: " + totalMessages);
-		System.out.println("Lost Messages: " + missingMessages);
-		//reset
-		receivedMessages = null;
-		totalMessages = -1;
+		System.out.println("Number of messages sent: " + totalMessages);
+		System.out.println("Number of messages lost: " + count);
+		System.out.println("Lost messages positions: " + missingMessages);
+
+		System.exit(0);
 	}
 }
