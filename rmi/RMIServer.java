@@ -9,7 +9,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
-import java.rmi.RMISecurityManager;
+import java.rmi.registry.Registry;
 
 
 import common.*;
@@ -37,26 +37,9 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
-		int count = 0;
-		String declare = "Lost packet numbers: ";
-
-		if (msg.messageNum + 1 == totalMessages) {
-			for (int i = 0; i < totalMessages; i++) {
-				if (receivedMessages[i] != 1) {
-					count++;
-					declare = declare + (i+1);
-				}
-			}
+		if(totalMessages == msg.totalMessages){
+			printResult();
 		}
-			// Edge case handling
-		if (count == 0) {
-		String s = s + "None";
-		}
-
-		System.out.println("Total messages sent: " + totalMessages);
-		System.out.println("Total messages received: " + (totalMessages - count));
-		System.out.println(declare);
-		System.exit(0);
 	}
 
 
@@ -68,7 +51,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		try {
 		// TO-DO: Initialise Security Manager
 		if (System.getSecurityManager() == null) {
-			System.setSecurityManager(new RMISecurityManager());
+			System.setSecurityManager(new SecurityManager());
 		}
 			rmis = new RMIServer();
 		} catch(RemoteException e) {
@@ -96,5 +79,25 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void printResult() {
+		if(receivedMessages == null || totalMessages <= 0) {
+			System.out.println("No messages detected.");
+			return;
+		}
+
+		String missingMessages = "";
+		for(int i = 0; i <receivedMessages.length; i++) {
+			if(receivedMessages[i] == 0) {
+				missingMessages += i + ", ";
+			}
+		}
+
+		System.out.println("Number of messages received: " + totalMessages);
+		System.out.println("Lost Messages: " + missingMessages);
+		//reset
+		receivedMessages = null;
+		totalMessages = -1;
 	}
 }
