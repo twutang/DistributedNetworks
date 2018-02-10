@@ -51,13 +51,14 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		// TO-DO: On receipt of first message, initialise the receive buffer
 
 		if (receivedMessages == null) {
-			totalMessages = msg.totalMessages;
+			totalMessages = 0;
 			receivedMessages = new int[msg.totalMessages];
 		}
 
 		// TO-DO: Log receipt of the message
 
 		receivedMessages[msg.messageNum] = 1;
+		totalMessages++;
 
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
