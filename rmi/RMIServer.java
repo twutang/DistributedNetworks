@@ -1,6 +1,3 @@
-/*
- * Created on 01-Mar-2016
- */
 package rmi;
 
 import java.net.MalformedURLException; // not used - compiler indicated it is never thrown during binding
@@ -106,3 +103,5 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		System.exit(0);
 	}
 }
+
+
